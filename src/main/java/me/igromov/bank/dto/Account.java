@@ -2,6 +2,7 @@ package me.igromov.bank.dto;
 
 import me.igromov.bank.exception.IllegalBalanceOperationException;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Account {
@@ -31,5 +32,18 @@ public class Account {
 
     public long getBalance() {
         return balance.get();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return id == account.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
