@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface AccountDao {
-    void createAccount(@NotNull Long id, long initialBalance);
+    void createAccount(long id, long initialBalance);
 
     @Nullable
-    Account getAccount(@NotNull Long id);
+    Account getAccount(long id);
 }

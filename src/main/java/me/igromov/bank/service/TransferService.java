@@ -54,4 +54,8 @@ public class TransferService {
 
         return account.getBalance();
     }
+
+    public void createAccount(long id, long initialBalance) {
+        accountDao.createAccount(id, initialBalance);
+    }
 }

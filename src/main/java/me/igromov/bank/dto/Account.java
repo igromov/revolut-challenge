@@ -3,35 +3,34 @@ package me.igromov.bank.dto;
 import me.igromov.bank.exception.IllegalBalanceOperationException;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Account {
     private final long id;
-    private final AtomicLong balance;
+    private long balance;
 
     public Account(long id, long balance) {
         this.id = id;
-        this.balance = new AtomicLong(balance);
+        this.balance = balance;
     }
 
-    public void deposit(long amountToAdd) {
+    public synchronized void deposit(long amountToAdd) {
         if (amountToAdd < 0) {
             throw new IllegalBalanceOperationException("Tried to increase balance for account #" + id + ", but amountToAdd is negative: " + amountToAdd);
         }
 
-        balance.addAndGet(amountToAdd);
+        balance = Math.addExact(balance, amountToAdd);
     }
 
-    public void withdraw(long amountToSubtract) {
+    public synchronized void withdraw(long amountToSubtract) {
         if (amountToSubtract < 0) {
             throw new IllegalBalanceOperationException("Tried to decrease balance for account #" + id + ", but amountToSubtract is negative: " + amountToSubtract);
         }
 
-        balance.addAndGet(-amountToSubtract);
+        balance = Math.subtractExact(balance, amountToSubtract);
     }
 
-    public long getBalance() {
-        return balance.get();
+    public synchronized long getBalance() {
+        return balance;
     }
 
     @Override
