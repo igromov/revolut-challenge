@@ -1,4 +1,4 @@
-package me.igromov.bank;
+package me.igromov.exchanger;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.UnirestException;

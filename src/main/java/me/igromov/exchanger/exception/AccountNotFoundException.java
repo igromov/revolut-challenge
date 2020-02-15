@@ -1,4 +1,4 @@
-package me.igromov.bank.exception;
+package me.igromov.exchanger.exception;
 
 public class AccountNotFoundException extends ApiRuntimeException {
     public AccountNotFoundException(String id) {

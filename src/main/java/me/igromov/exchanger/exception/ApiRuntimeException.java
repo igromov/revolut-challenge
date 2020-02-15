@@ -1,4 +1,4 @@
-package me.igromov.bank.exception;
+package me.igromov.exchanger.exception;
 
 public class ApiRuntimeException extends RuntimeException {
     public ApiRuntimeException(String message) {

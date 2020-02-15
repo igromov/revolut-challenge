@@ -1,6 +1,6 @@
-package me.igromov.bank.core;
+package me.igromov.exchanger.core;
 
-import me.igromov.bank.exception.IllegalBalanceOperationException;
+import me.igromov.exchanger.exception.IllegalBalanceOperationException;
 
 import java.util.Objects;
 

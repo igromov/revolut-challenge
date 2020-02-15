@@ -1,20 +1,20 @@
-package me.igromov.bank;
+package me.igromov.exchanger;
 
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import me.igromov.bank.controller.AccountCreateRequest;
-import me.igromov.bank.controller.TransferController;
-import me.igromov.bank.controller.TransferRequest;
-import me.igromov.bank.dao.AccountDao;
-import me.igromov.bank.dao.InMemoryAccountDao;
-import me.igromov.bank.service.TransferService;
+import me.igromov.exchanger.controller.TransferController;
+import me.igromov.exchanger.controller.pojo.AccountCreateRequest;
+import me.igromov.exchanger.controller.pojo.TransferRequest;
+import me.igromov.exchanger.dao.AccountDao;
+import me.igromov.exchanger.dao.InMemoryAccountDao;
+import me.igromov.exchanger.service.TransferService;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 public class BaseIT {
     private static final int TEST_PORT = 7001;
-    private static final String BASE_URL = "http://localhost:" + TEST_PORT + "/money-transfer";
+    private static final String BASE_URL = "http://localhost:" + TEST_PORT + "/exchanger";
 
     private static Javalin app;
 
@@ -25,7 +25,7 @@ public class BaseIT {
     @BeforeClass
     public static void initApp() {
         app = Javalin.create()
-                .contextPath("money-transfer")
+                .contextPath("exchanger")
                 .port(TEST_PORT);
 
         AccountDao accountDao = new InMemoryAccountDao();

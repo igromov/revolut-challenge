@@ -1,4 +1,4 @@
-package me.igromov.bank.exception;
+package me.igromov.exchanger.exception;
 
 public class InvalidAccountParametersException extends ApiRuntimeException {
     public InvalidAccountParametersException(String message) {

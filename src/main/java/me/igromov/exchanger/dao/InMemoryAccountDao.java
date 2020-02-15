@@ -1,8 +1,8 @@
-package me.igromov.bank.dao;
+package me.igromov.exchanger.dao;
 
-import me.igromov.bank.core.Account;
-import me.igromov.bank.exception.AccountAlreadyExistsException;
-import me.igromov.bank.exception.InvalidAccountParametersException;
+import me.igromov.exchanger.core.Account;
+import me.igromov.exchanger.exception.AccountAlreadyExistsException;
+import me.igromov.exchanger.exception.InvalidAccountParametersException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,6 +1,6 @@
-package me.igromov.bank.dao;
+package me.igromov.exchanger.dao;
 
-import me.igromov.bank.core.Account;
+import me.igromov.exchanger.core.Account;
 import org.jetbrains.annotations.Nullable;
 
 public interface AccountDao {

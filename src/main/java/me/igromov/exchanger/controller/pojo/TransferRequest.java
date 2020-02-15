@@ -1,4 +1,4 @@
-package me.igromov.bank.controller;
+package me.igromov.exchanger.controller.pojo;
 
 public class TransferRequest {
     private long from;

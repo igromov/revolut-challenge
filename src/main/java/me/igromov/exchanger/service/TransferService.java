@@ -1,9 +1,9 @@
-package me.igromov.bank.service;
+package me.igromov.exchanger.service;
 
-import me.igromov.bank.core.Account;
-import me.igromov.bank.dao.AccountDao;
-import me.igromov.bank.exception.AccountNotFoundException;
-import me.igromov.bank.exception.IllegalBalanceOperationException;
+import me.igromov.exchanger.core.Account;
+import me.igromov.exchanger.dao.AccountDao;
+import me.igromov.exchanger.exception.AccountNotFoundException;
+import me.igromov.exchanger.exception.IllegalBalanceOperationException;
 
 public class TransferService {
 
@@ -14,9 +14,8 @@ public class TransferService {
     }
 
     /**
-     *
-     * @param from Source account, money will be withdrawn from this one. Should not have same id with `to`
-     * @param to Target account, money will be deposited to this one. Should not have same id with `from`
+     * @param from   Source account, money will be withdrawn from this one. Should not have same id with `to`
+     * @param to     Target account, money will be deposited to this one. Should not have same id with `from`
      * @param amount Amount to transfer, should be > 0
      */
     public void transfer(long from, long to, long amount) {
@@ -44,6 +43,26 @@ public class TransferService {
                 toAccount.deposit(amount);
             }
         }
+    }
+
+    public void withdraw(long accountId, long amount) {
+        Account account = accountDao.getAccount(accountId);
+
+        if (account == null) {
+            throw new AccountNotFoundException(accountId);
+        }
+
+        account.withdraw(amount);
+    }
+
+    public void deposit(long accountId, long amount) {
+        Account account = accountDao.getAccount(accountId);
+
+        if (account == null) {
+            throw new AccountNotFoundException(accountId);
+        }
+
+        account.deposit(amount);
     }
 
     public long getBalance(long accountId) {

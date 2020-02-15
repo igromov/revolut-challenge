@@ -1,4 +1,4 @@
-package me.igromov.bank;
+package me.igromov.exchanger;
 
 import kong.unirest.HttpResponse;
 import org.junit.Assert;
@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TransferIT extends BaseIT {
-
 
     @Test
     public void transferNonExistentAccountsTest() {

@@ -1,12 +1,14 @@
-package me.igromov.bank.controller;
+package me.igromov.exchanger.controller;
 
 import io.javalin.Context;
 import io.javalin.ExceptionHandler;
 import io.javalin.HaltException;
 import io.javalin.Javalin;
-import me.igromov.bank.exception.AccountNotFoundException;
-import me.igromov.bank.exception.ApiRuntimeException;
-import me.igromov.bank.service.TransferService;
+import me.igromov.exchanger.controller.pojo.AccountCreateRequest;
+import me.igromov.exchanger.controller.pojo.TransferRequest;
+import me.igromov.exchanger.exception.AccountNotFoundException;
+import me.igromov.exchanger.exception.ApiRuntimeException;
+import me.igromov.exchanger.service.TransferService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
