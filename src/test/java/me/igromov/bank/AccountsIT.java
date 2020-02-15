@@ -1,30 +1,40 @@
 package me.igromov.bank;
 
 import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
-import me.igromov.bank.controller.AccountCreateRequest;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 public class AccountsIT extends BaseIT {
 
     @Test
-    public void createAccountsWithSameId() throws UnirestException {
-        AccountCreateRequest request = new AccountCreateRequest();
-        request.setId(100L);
-        request.setBalance(999L);
+    public void createAccountsWithSameIdTest() throws UnirestException {
+        HttpResponse<String> response1 = createAccount(100L, 999L);
+        Assert.assertEquals(response1.getBody(), 200, response1.getStatus());
 
-        HttpResponse<String> response1 = Unirest.post(url("/account/create"))
-                .body(request)
-                .asString();
+        HttpResponse<String> response2 = createAccount(100L, 999L);
+        Assert.assertEquals(response2.getBody(), 400, response2.getStatus());
+    }
 
-        Assert.assertEquals(200, response1.getStatus());
+    @Test
+    public void createDifferentAccountsTest() {
+        Map<Long, HttpResponse<String>> responses = LongStream.rangeClosed(101, 200)
+                .boxed()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        id -> createAccount(id, 999))
+                );
 
-        HttpResponse<String> response2 = Unirest.post(url("/account/create"))
-                .body(request)
-                .asString();
-
-        Assert.assertEquals(400, response2.getStatus());
+        responses.forEach((id, response) -> {
+            Assert.assertEquals(
+                    "Status != 200 for request #" + id,
+                    200,
+                    response.getStatus()
+            );
+        });
     }
 }

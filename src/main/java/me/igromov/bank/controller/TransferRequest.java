@@ -5,6 +5,15 @@ public class TransferRequest {
     private long to;
     private long amount;
 
+    public TransferRequest() {
+    }
+
+    public TransferRequest(long from, long to, long amount) {
+        this.from = from;
+        this.to = to;
+        this.amount = amount;
+    }
+
     public long getFrom() {
         return from;
     }

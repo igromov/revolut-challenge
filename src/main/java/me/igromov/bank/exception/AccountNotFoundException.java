@@ -1,6 +1,6 @@
 package me.igromov.bank.exception;
 
-public class AccountNotFoundException extends RuntimeException {
+public class AccountNotFoundException extends ApiRuntimeException {
     public AccountNotFoundException(String id) {
         super("Account not found: #" + id);
     }

@@ -9,7 +9,7 @@ import java.io.IOException;
 public class Launcher {
     private static final int PORT = 7000;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         Javalin app = Javalin.create()
                 .contextPath("money-transfer")

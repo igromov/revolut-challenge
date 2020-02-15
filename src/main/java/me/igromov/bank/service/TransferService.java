@@ -1,7 +1,7 @@
 package me.igromov.bank.service;
 
+import me.igromov.bank.core.Account;
 import me.igromov.bank.dao.AccountDao;
-import me.igromov.bank.dto.Account;
 import me.igromov.bank.exception.AccountNotFoundException;
 import me.igromov.bank.exception.IllegalBalanceOperationException;
 
@@ -13,6 +13,12 @@ public class TransferService {
         this.accountDao = accountDao;
     }
 
+    /**
+     *
+     * @param from Source account, money will be withdrawn from this one. Should not have same id with `to`
+     * @param to Target account, money will be deposited to this one. Should not have same id with `from`
+     * @param amount Amount to transfer, should be > 0
+     */
     public void transfer(long from, long to, long amount) {
         Account fromAccount = accountDao.getAccount(from);
         Account toAccount = accountDao.getAccount(to);
@@ -25,13 +31,8 @@ public class TransferService {
             throw new AccountNotFoundException(to);
         }
 
-        if (amount <= 0) {
-            // TODO from to to log
-            throw new IllegalBalanceOperationException("Amount to transfer must be positive, but was: " + amount);
-        }
-
         if (from == to) {
-            throw new IllegalBalanceOperationException("Can't transfer money to the same account #" + from);
+            throw new IllegalBalanceOperationException("Illegal parameter: to / from accounts should be different, but were: #" + from);
         }
 
         final Account lockOne = from < to ? fromAccount : toAccount;

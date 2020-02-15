@@ -1,7 +1,8 @@
 package me.igromov.bank.dao;
 
-import me.igromov.bank.dto.Account;
-import me.igromov.bank.exception.DuplicateAccountException;
+import me.igromov.bank.core.Account;
+import me.igromov.bank.exception.AccountAlreadyExistsException;
+import me.igromov.bank.exception.InvalidAccountParametersException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,11 +13,19 @@ public class InMemoryAccountDao implements AccountDao {
 
     @Override
     public void createAccount(long id, long initialBalance) {
+        if (initialBalance < 0) {
+            throw new InvalidAccountParametersException("Initial balance should be >= 0, but was " + initialBalance);
+        }
+
+        if (id <= 0) {
+            throw new InvalidAccountParametersException("Account id should be > 0, but was " + initialBalance);
+        }
+
         Account account = new Account(id, initialBalance);
         Account oldAcc = accountMap.putIfAbsent(id, account);
 
         if (oldAcc != null) {
-            throw new DuplicateAccountException("Duplicate account #" + id + " was not created");
+            throw new AccountAlreadyExistsException("Duplicate account #" + id + " was not created");
         }
     }
 

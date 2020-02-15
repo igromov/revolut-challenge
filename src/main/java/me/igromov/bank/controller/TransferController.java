@@ -5,27 +5,25 @@ import io.javalin.ExceptionHandler;
 import io.javalin.HaltException;
 import io.javalin.Javalin;
 import me.igromov.bank.exception.AccountNotFoundException;
-import me.igromov.bank.exception.DuplicateAccountException;
-import me.igromov.bank.exception.IllegalBalanceOperationException;
+import me.igromov.bank.exception.ApiRuntimeException;
 import me.igromov.bank.service.TransferService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+
 public class TransferController {
-    private final Javalin router;
     private final TransferService transferService;
 
     public TransferController(Javalin router, TransferService transferService) {
-        this.router = router;
         this.transferService = transferService;
 
-        this.router.get("/balance/:id", this::getBalance);
-        this.router.post("/account/create", this::createAccount);
+        router.get("/account/balance/:id", this::getBalance);
+        router.post("/account/create", this::createAccount);
+        router.post("/transfer", this::transfer);
 
-        this.router.exception(AccountNotFoundException.class, getExceptionHandler(400));
-        this.router.exception(DuplicateAccountException.class, getExceptionHandler(400));
-        this.router.exception(IllegalBalanceOperationException.class, getExceptionHandler(400));
+        router.exception(ApiRuntimeException.class, getExceptionHandler(HTTP_BAD_REQUEST));
     }
 
     @NotNull
@@ -37,7 +35,6 @@ public class TransferController {
     }
 
     private void createAccount(Context ctx) {
-        // TODO exception handling?
         AccountCreateRequest request = ctx.bodyAsClass(AccountCreateRequest.class);
 
         Long idParam = request.getId();
@@ -50,7 +47,6 @@ public class TransferController {
         transferService.createAccount(idParam, balance);
     }
 
-
     private void getBalance(Context ctx) {
         String idParam = ctx.param("id");
 
@@ -62,6 +58,12 @@ public class TransferController {
         long balance = transferService.getBalance(id);
 
         ctx.json(balance);
+    }
+
+    private void transfer(Context ctx) {
+        TransferRequest request = ctx.bodyAsClass(TransferRequest.class);
+
+        transferService.transfer(request.getFrom(), request.getTo(), request.getAmount());
     }
 
     private long parseLongOrException(String longParam, Supplier<RuntimeException> exceptionProducer) {
