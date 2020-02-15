@@ -1,4 +1,4 @@
-package me.igromov.exchanger;
+package me.igromov.exchanger.it;
 
 import kong.unirest.HttpResponse;
 import org.junit.Assert;
@@ -7,20 +7,22 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.net.HttpURLConnection.*;
+
 public class TransferIT extends BaseIT {
 
     @Test
     public void transferNonExistentAccountsTest() {
         HttpResponse<String> response = transfer(1, 2, 100);
-        Assert.assertEquals(response.getBody(), 400, response.getStatus());
+        Assert.assertEquals(response.getBody(), HTTP_BAD_REQUEST, response.getStatus());
 
         createAccount(1, 100);
         HttpResponse<String> response1 = transfer(1, 2, 100);
-        Assert.assertEquals(response1.getBody(), 400, response1.getStatus());
+        Assert.assertEquals(response1.getBody(), HTTP_BAD_REQUEST, response1.getStatus());
 
         createAccount(2, 100);
         HttpResponse<String> response2 = transfer(1, 2, 100);
-        Assert.assertEquals(response2.getBody(), 200, response2.getStatus());
+        Assert.assertEquals(response2.getBody(), HTTP_OK, response2.getStatus());
     }
 
     @Test
@@ -38,21 +40,21 @@ public class TransferIT extends BaseIT {
         );
 
         // 200 - 900
-        Assert.assertEquals(responses.get(0).getBody(), 400, responses.get(0).getStatus());
+        Assert.assertEquals(responses.get(0).getBody(), HTTP_BAD_REQUEST, responses.get(0).getStatus());
 
         // 200 - 150
-        Assert.assertEquals(responses.get(1).getBody(), 200, responses.get(1).getStatus());
+        Assert.assertEquals(responses.get(1).getBody(), HTTP_OK, responses.get(1).getStatus());
 
         // 50 - 51
-        Assert.assertEquals(responses.get(2).getBody(), 400, responses.get(2).getStatus());
+        Assert.assertEquals(responses.get(2).getBody(), HTTP_BAD_REQUEST, responses.get(2).getStatus());
 
         // 50 - 50
-        Assert.assertEquals(responses.get(3).getBody(), 200, responses.get(3).getStatus());
+        Assert.assertEquals(responses.get(3).getBody(), HTTP_OK, responses.get(3).getStatus());
 
         // 0 - 1
-        Assert.assertEquals(responses.get(4).getBody(), 400, responses.get(4).getStatus());
+        Assert.assertEquals(responses.get(4).getBody(), HTTP_BAD_REQUEST, responses.get(4).getStatus());
 
-        Assert.assertEquals(200, responses.get(5).getStatus());
+        Assert.assertEquals(HTTP_OK, responses.get(5).getStatus());
         Assert.assertEquals("0", responses.get(5).getBody());
     }
 }

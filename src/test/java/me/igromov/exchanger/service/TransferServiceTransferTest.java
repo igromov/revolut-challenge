@@ -9,6 +9,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.net.HttpURLConnection.*;
+
 public class TransferServiceTransferTest {
     private TransferService transferService;
 
@@ -116,7 +118,7 @@ public class TransferServiceTransferTest {
         transferService.deposit(1, 100);
         transferService.deposit(1, 100);
 
-        Assert.assertEquals(400, transferService.getBalance(1));
+        Assert.assertEquals(HTTP_BAD_REQUEST, transferService.getBalance(1));
     }
 
     @Test

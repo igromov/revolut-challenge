@@ -5,6 +5,7 @@ import io.javalin.ExceptionHandler;
 import io.javalin.HaltException;
 import io.javalin.Javalin;
 import me.igromov.exchanger.controller.pojo.AccountCreateRequest;
+import me.igromov.exchanger.controller.pojo.ChangeBalanceRequest;
 import me.igromov.exchanger.controller.pojo.TransferRequest;
 import me.igromov.exchanger.exception.AccountNotFoundException;
 import me.igromov.exchanger.exception.ApiRuntimeException;
@@ -23,27 +24,22 @@ public class TransferController {
 
         router.get("/account/balance/:id", this::getBalance);
         router.post("/account/create", this::createAccount);
+        router.post("/account/withdraw", this::withdrawn);
+        router.post("/account/deposit", this::deposit);
         router.post("/transfer", this::transfer);
 
         router.exception(ApiRuntimeException.class, getExceptionHandler(HTTP_BAD_REQUEST));
     }
 
-    @NotNull
-    private <T extends Exception> ExceptionHandler<T> getExceptionHandler(int statusCode) {
-        return (exception, ctx) -> {
-            ctx.status(statusCode);
-            ctx.result(exception.getMessage());
-        };
-    }
 
     private void createAccount(Context ctx) {
-        AccountCreateRequest request = ctx.bodyAsClass(AccountCreateRequest.class);
+        AccountCreateRequest request = parseBodyOrException(ctx, AccountCreateRequest.class);
 
         Long idParam = request.getId();
         Long balance = request.getBalance();
 
         if (idParam == null) {
-            throw new HaltException(400, "'id' param is not specified");
+            throw new HaltException(HTTP_BAD_REQUEST, "'id' param is not specified");
         }
 
         transferService.createAccount(idParam, balance);
@@ -53,7 +49,7 @@ public class TransferController {
         String idParam = ctx.param("id");
 
         if (idParam == null) {
-            throw new HaltException(400, "id param is not specified");
+            throw new HaltException(HTTP_BAD_REQUEST, "id param is not specified");
         }
 
         long id = parseLongOrException(idParam, () -> new AccountNotFoundException(idParam));
@@ -63,9 +59,21 @@ public class TransferController {
     }
 
     private void transfer(Context ctx) {
-        TransferRequest request = ctx.bodyAsClass(TransferRequest.class);
+        TransferRequest request = parseBodyOrException(ctx, TransferRequest.class);
 
         transferService.transfer(request.getFrom(), request.getTo(), request.getAmount());
+    }
+
+    private void withdrawn(Context ctx) {
+        ChangeBalanceRequest request = parseBodyOrException(ctx, ChangeBalanceRequest.class);
+
+        transferService.withdraw(request.getId(), request.getAmount());
+    }
+
+    private void deposit(Context ctx) {
+        ChangeBalanceRequest request = parseBodyOrException(ctx, ChangeBalanceRequest.class);
+
+        transferService.deposit(request.getId(), request.getAmount());
     }
 
     private long parseLongOrException(String longParam, Supplier<RuntimeException> exceptionProducer) {
@@ -76,4 +84,19 @@ public class TransferController {
         }
     }
 
+    private <T> T parseBodyOrException(Context ctx, Class<T> clazz) {
+        try {
+            return ctx.bodyAsClass(clazz);
+        } catch (Exception e) {
+            throw new HaltException(HTTP_BAD_REQUEST, "Malformed request body");
+        }
+    }
+
+    @NotNull
+    private <T extends Exception> ExceptionHandler<T> getExceptionHandler(int statusCode) {
+        return (exception, ctx) -> {
+            ctx.status(statusCode);
+            ctx.result(exception.getMessage());
+        };
+    }
 }

@@ -1,4 +1,4 @@
-package me.igromov.exchanger;
+package me.igromov.exchanger.it;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.UnirestException;
@@ -9,15 +9,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
+import static java.net.HttpURLConnection.*;
+
 public class AccountsIT extends BaseIT {
 
     @Test
     public void createAccountsWithSameIdTest() throws UnirestException {
         HttpResponse<String> response1 = createAccount(100L, 999L);
-        Assert.assertEquals(response1.getBody(), 200, response1.getStatus());
+        Assert.assertEquals(response1.getBody(), HTTP_OK, response1.getStatus());
 
         HttpResponse<String> response2 = createAccount(100L, 999L);
-        Assert.assertEquals(response2.getBody(), 400, response2.getStatus());
+        Assert.assertEquals(response2.getBody(), HTTP_BAD_REQUEST, response2.getStatus());
     }
 
     @Test
@@ -32,7 +34,7 @@ public class AccountsIT extends BaseIT {
         responses.forEach((id, response) -> {
             Assert.assertEquals(
                     "Status != 200 for request #" + id,
-                    200,
+                    HTTP_OK,
                     response.getStatus()
             );
         });

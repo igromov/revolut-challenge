@@ -1,4 +1,4 @@
-package me.igromov.exchanger;
+package me.igromov.exchanger.it;
 
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;

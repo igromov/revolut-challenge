@@ -26,7 +26,7 @@ public class Account {
             throw new IllegalBalanceOperationException("Illegal parameter: amount, should be > 0, but was: " + amount);
         }
 
-        long newBalance = Math.subtractExact(this.balance, amount);
+        long newBalance = Math.subtractExact(balance, amount);
 
         if (newBalance < 0) {
             throw new IllegalBalanceOperationException("Tried to decrease balance for account #" + id + " for " + amount + " but it only has " + balance);

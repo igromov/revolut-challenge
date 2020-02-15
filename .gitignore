@@ -25,3 +25,5 @@ hs_err_pid*
 # Custom
 /revolut-challenge.iml
 /.idea/
+/target/
+/exchanger.iml
