@@ -12,68 +12,68 @@ import org.junit.Test;
 
 import java.util.stream.IntStream;
 
-public class TransferServiceAccountTest {
-    private TransferService transferService;
+public class ExchangeServiceAccountTest {
+    private ExchangeService exchangeService;
 
     @Before
     public void setUp() throws Exception {
         AccountDao accountDao = new InMemoryAccountDao();
-        transferService = new TransferService(accountDao);
+        exchangeService = new ExchangeService(accountDao);
     }
 
     @After
     public void tearDown() throws Exception {
-        transferService = null;
+        exchangeService = null;
     }
 
     @Test(expected = AccountAlreadyExistsException.class)
     public void createDuplicateAccountTest() {
-        transferService.createAccount(1, 100);
-        transferService.createAccount(1, 100);
+        exchangeService.createAccount(1, 100);
+        exchangeService.createAccount(1, 100);
     }
 
     @Test
     public void createValidAccountsTest() {
-        transferService.createAccount(1, 100);
-        transferService.createAccount(2, 100);
+        exchangeService.createAccount(1, 100);
+        exchangeService.createAccount(2, 100);
     }
 
     @Test(expected = InvalidAccountParametersException.class)
     public void createAccountWithNegativeBalanceTest() {
-        transferService.createAccount(1, -100);
+        exchangeService.createAccount(1, -100);
     }
 
     @Test
     public void createAccountWithZeroBalanceTest() {
-        transferService.createAccount(1, 0);
+        exchangeService.createAccount(1, 0);
     }
 
     @Test(expected = InvalidAccountParametersException.class)
     public void createAccountWithNegativeIdTest() {
-        transferService.createAccount(-1, 100);
+        exchangeService.createAccount(-1, 100);
     }
 
     @Test
     public void createMultipleAccountsTest() {
         IntStream.rangeClosed(1, 1000)
                 .parallel()
-                .forEach(id -> transferService.createAccount(id, 100));
+                .forEach(id -> exchangeService.createAccount(id, 100));
     }
 
     @Test(expected = AccountNotFoundException.class)
     public void getBalanceFromInvalidAccountTest() {
-        transferService.getBalance(-1);
+        exchangeService.getBalance(-1);
     }
 
     @Test(expected = AccountNotFoundException.class)
     public void getBalanceFromNonExistentAccountTest() {
-        transferService.getBalance(100);
+        exchangeService.getBalance(100);
     }
 
     @Test
     public void getBalanceTest() {
-        transferService.createAccount(1, 100);
-        long actual = transferService.getBalance(1);
+        exchangeService.createAccount(1, 100);
+        long actual = exchangeService.getBalance(1);
 
         Assert.assertEquals(100, actual);
     }

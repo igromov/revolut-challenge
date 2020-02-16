@@ -9,18 +9,22 @@ import me.igromov.exchanger.controller.entity.ChangeBalanceRequest;
 import me.igromov.exchanger.controller.entity.TransferRequest;
 import me.igromov.exchanger.exception.AccountNotFoundException;
 import me.igromov.exchanger.exception.ApiRuntimeException;
-import me.igromov.exchanger.service.TransferService;
+import me.igromov.exchanger.service.ExchangeService;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 
-public class TransferController {
-    private final TransferService transferService;
+public class ExchangeController {
+    private static final Logger log = LoggerFactory.getLogger(ExchangeController.class);
+    private final ExchangeService exchangeService;
 
-    public TransferController(Javalin router, TransferService transferService) {
-        this.transferService = transferService;
+    public ExchangeController(Javalin router, ExchangeService exchangeService) {
+        this.exchangeService = exchangeService;
         router.get("/account/balance/:id", this::getBalance);
         router.post("/account/create", this::createAccount);
         router.post("/account/withdraw", this::withdrawn);
@@ -28,6 +32,7 @@ public class TransferController {
         router.post("/transfer", this::transfer);
 
         router.exception(ApiRuntimeException.class, getExceptionHandler(HTTP_BAD_REQUEST));
+        router.exception(Exception.class, getExceptionHandler(HTTP_INTERNAL_ERROR));
     }
 
 
@@ -41,7 +46,7 @@ public class TransferController {
             throw new HaltException(HTTP_BAD_REQUEST, "'id' param is not specified");
         }
 
-        transferService.createAccount(idParam, balance);
+        exchangeService.createAccount(idParam, balance);
     }
 
     private void getBalance(Context ctx) {
@@ -52,7 +57,7 @@ public class TransferController {
         }
 
         long id = parseLongOrException(idParam, () -> new AccountNotFoundException(idParam));
-        long balance = transferService.getBalance(id);
+        long balance = exchangeService.getBalance(id);
 
         ctx.json(balance);
     }
@@ -60,19 +65,19 @@ public class TransferController {
     private void transfer(Context ctx) {
         TransferRequest request = parseBodyOrException(ctx, TransferRequest.class);
 
-        transferService.transfer(request.getFrom(), request.getTo(), request.getAmount());
+        exchangeService.transfer(request.getFrom(), request.getTo(), request.getAmount());
     }
 
     private void withdrawn(Context ctx) {
         ChangeBalanceRequest request = parseBodyOrException(ctx, ChangeBalanceRequest.class);
 
-        transferService.withdraw(request.getId(), request.getAmount());
+        exchangeService.withdraw(request.getId(), request.getAmount());
     }
 
     private void deposit(Context ctx) {
         ChangeBalanceRequest request = parseBodyOrException(ctx, ChangeBalanceRequest.class);
 
-        transferService.deposit(request.getId(), request.getAmount());
+        exchangeService.deposit(request.getId(), request.getAmount());
     }
 
     private long parseLongOrException(String longParam, Supplier<RuntimeException> exceptionProducer) {
@@ -96,6 +101,7 @@ public class TransferController {
         return (exception, ctx) -> {
             ctx.status(statusCode);
             ctx.result(exception.getMessage());
+            log.error("Exception while handling request:\nurl: {}\nmethod: {}\nbody: {}", ctx.url(), ctx.method(), ctx.body(), exception);
         };
     }
 }

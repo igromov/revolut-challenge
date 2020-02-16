@@ -4,12 +4,13 @@ import me.igromov.exchanger.core.Account;
 import me.igromov.exchanger.dao.AccountDao;
 import me.igromov.exchanger.exception.AccountNotFoundException;
 import me.igromov.exchanger.exception.IllegalBalanceOperationException;
+import org.jetbrains.annotations.NotNull;
 
-public class TransferService {
+public class ExchangeService {
 
     private final AccountDao accountDao;
 
-    public TransferService(AccountDao accountDao) {
+    public ExchangeService(AccountDao accountDao) {
         this.accountDao = accountDao;
     }
 
@@ -19,16 +20,8 @@ public class TransferService {
      * @param amount Amount to transfer, should be > 0
      */
     public void transfer(long from, long to, long amount) {
-        Account fromAccount = accountDao.getAccount(from);
-        Account toAccount = accountDao.getAccount(to);
-
-        if (fromAccount == null) {
-            throw new AccountNotFoundException(from);
-        }
-
-        if (toAccount == null) {
-            throw new AccountNotFoundException(to);
-        }
+        Account fromAccount = getAccountOrThrowException(from);
+        Account toAccount = getAccountOrThrowException(to);
 
         if (from == to) {
             throw new IllegalBalanceOperationException("Illegal parameter: to / from accounts should be different, but were: #" + from);
@@ -46,31 +39,30 @@ public class TransferService {
     }
 
     public void withdraw(long accountId, long amount) {
-        Account account = accountDao.getAccount(accountId);
-
-        if (account == null) {
-            throw new AccountNotFoundException(accountId);
-        }
+        Account account = getAccountOrThrowException(accountId);
 
         account.withdraw(amount);
     }
 
     public void deposit(long accountId, long amount) {
-        Account account = accountDao.getAccount(accountId);
-
-        if (account == null) {
-            throw new AccountNotFoundException(accountId);
-        }
+        Account account = getAccountOrThrowException(accountId);
 
         account.deposit(amount);
     }
 
-    public long getBalance(long accountId) {
+    @NotNull
+    private Account getAccountOrThrowException(long accountId) {
         Account account = accountDao.getAccount(accountId);
 
         if (account == null) {
             throw new AccountNotFoundException(accountId);
         }
+
+        return account;
+    }
+
+    public long getBalance(long accountId) {
+        Account account = getAccountOrThrowException(accountId);
 
         return account.getBalance();
     }

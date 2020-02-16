@@ -3,12 +3,12 @@ package me.igromov.exchanger.it;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import me.igromov.exchanger.controller.TransferController;
+import me.igromov.exchanger.controller.ExchangeController;
 import me.igromov.exchanger.controller.entity.AccountCreateRequest;
 import me.igromov.exchanger.controller.entity.TransferRequest;
 import me.igromov.exchanger.dao.AccountDao;
 import me.igromov.exchanger.dao.InMemoryAccountDao;
-import me.igromov.exchanger.service.TransferService;
+import me.igromov.exchanger.service.ExchangeService;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -29,8 +29,8 @@ public class BaseIT {
                 .port(TEST_PORT);
 
         AccountDao accountDao = new InMemoryAccountDao();
-        TransferService transferService = new TransferService(accountDao);
-        TransferController transferController = new TransferController(app, transferService);
+        ExchangeService exchangeService = new ExchangeService(accountDao);
+        ExchangeController exchangeController = new ExchangeController(app, exchangeService);
 
         app.start();
     }

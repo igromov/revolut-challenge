@@ -1,10 +1,10 @@
 package me.igromov.exchanger;
 
 import io.javalin.Javalin;
-import me.igromov.exchanger.controller.TransferController;
+import me.igromov.exchanger.controller.ExchangeController;
 import me.igromov.exchanger.dao.AccountDao;
 import me.igromov.exchanger.dao.InMemoryAccountDao;
-import me.igromov.exchanger.service.TransferService;
+import me.igromov.exchanger.service.ExchangeService;
 
 public class Launcher {
     private static final int PORT = 7000;
@@ -16,8 +16,8 @@ public class Launcher {
                 .port(PORT);
 
         AccountDao accountDao = new InMemoryAccountDao();
-        TransferService transferService = new TransferService(accountDao);
-        TransferController transferController = new TransferController(app, transferService);
+        ExchangeService exchangeService = new ExchangeService(accountDao);
+        ExchangeController exchangeController = new ExchangeController(app, exchangeService);
 
         app.start();
     }

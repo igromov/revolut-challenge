@@ -12,38 +12,38 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-public class TransferServiceHighLoadTest {
-    private TransferService transferService;
+public class ExchangeServiceHighLoadTest {
+    private ExchangeService exchangeService;
 
     @Before
     public void setUp() throws Exception {
         AccountDao accountDao = new InMemoryAccountDao();
-        transferService = new TransferService(accountDao);
+        exchangeService = new ExchangeService(accountDao);
     }
 
     @After
     public void tearDown() throws Exception {
-        transferService = null;
+        exchangeService = null;
     }
 
     @Test(timeout = 5000)
     public void simpleTransferToNextAccountTest() {
         IntStream.rangeClosed(1, 1000)
                 .parallel()
-                .forEach(id -> transferService.createAccount(id, 1000));
+                .forEach(id -> exchangeService.createAccount(id, 1000));
 
         IntStream.rangeClosed(1, 1000)
                 .parallel()
                 .forEach(id -> Assert.assertEquals(
                         "account #" + id,
                         1000,
-                        transferService.getBalance(id)
+                        exchangeService.getBalance(id)
                 ));
 
         IntStream.rangeClosed(1, 1000)
                 .parallel()
                 .forEach(
-                        id -> transferService.transfer(id, id % 1000 + 1, 100)
+                        id -> exchangeService.transfer(id, id % 1000 + 1, 100)
                 );
 
         IntStream.rangeClosed(1, 1000)
@@ -51,7 +51,7 @@ public class TransferServiceHighLoadTest {
                 .forEach(id -> Assert.assertEquals(
                         "account #" + id,
                         1000,
-                        transferService.getBalance(id)
+                        exchangeService.getBalance(id)
                 ));
     }
 
@@ -64,14 +64,14 @@ public class TransferServiceHighLoadTest {
 
         IntStream.rangeClosed(startAccIdIncl, endAccIdIncl)
                 .parallel()
-                .forEach(id -> transferService.createAccount(id, initialBalance));
+                .forEach(id -> exchangeService.createAccount(id, initialBalance));
 
         IntStream.rangeClosed(startAccIdIncl, endAccIdIncl)
                 .parallel()
                 .forEach(id -> Assert.assertEquals(
                         "account #" + id,
                         endAccIdIncl,
-                        transferService.getBalance(id)
+                        exchangeService.getBalance(id)
                 ));
 
         int n = 10_000;
@@ -91,7 +91,7 @@ public class TransferServiceHighLoadTest {
             }
 
             executor.execute(() -> {
-                transferService.transfer(from, to, amount);
+                exchangeService.transfer(from, to, amount);
                 latch.countDown();
             });
         }
@@ -100,7 +100,7 @@ public class TransferServiceHighLoadTest {
 
         long overallBalance = IntStream.rangeClosed(startAccIdIncl, endAccIdIncl)
                 .parallel()
-                .mapToLong(id -> transferService.getBalance(id))
+                .mapToLong(id -> exchangeService.getBalance(id))
                 .sum();
 
         Assert.assertEquals((endAccIdIncl - startAccIdIncl + 1) * initialBalance, overallBalance);
@@ -109,8 +109,8 @@ public class TransferServiceHighLoadTest {
 
     @Test(timeout = 5000)
     public void twoAccountsHighloadTransferTest() throws InterruptedException {
-        transferService.createAccount(1, 100);
-        transferService.createAccount(2, 100);
+        exchangeService.createAccount(1, 100);
+        exchangeService.createAccount(2, 100);
 
         ExecutorService executor = Executors.newFixedThreadPool(20);
 
@@ -122,15 +122,15 @@ public class TransferServiceHighLoadTest {
             long to = (i + 1) % 2 + 1;
 
             executor.execute(() -> {
-                transferService.transfer(from, to, 3);
+                exchangeService.transfer(from, to, 3);
                 latch.countDown();
             });
         }
 
         latch.await();
 
-        long b1 = transferService.getBalance(1);
-        long b2 = transferService.getBalance(2);
+        long b1 = exchangeService.getBalance(1);
+        long b2 = exchangeService.getBalance(2);
 
         Assert.assertEquals(100, b1);
         Assert.assertEquals(100, b2);
@@ -138,7 +138,7 @@ public class TransferServiceHighLoadTest {
 
     @Test(timeout = 5000)
     public void withdrawAndDepositTest() throws InterruptedException {
-        transferService.createAccount(1, 1000);
+        exchangeService.createAccount(1, 1000);
 
         ExecutorService executor = Executors.newFixedThreadPool(20);
 
@@ -147,17 +147,17 @@ public class TransferServiceHighLoadTest {
 
         for (int i = 0; i < n; i++) {
             executor.execute(() -> {
-                transferService.withdraw(1, 1);
+                exchangeService.withdraw(1, 1);
                 latch.countDown();
             });
             executor.execute(() -> {
-                transferService.deposit(1, 1);
+                exchangeService.deposit(1, 1);
                 latch.countDown();
             });
         }
 
         latch.await();
 
-        Assert.assertEquals(1000, transferService.getBalance(1));
+        Assert.assertEquals(1000, exchangeService.getBalance(1));
     }
 }
