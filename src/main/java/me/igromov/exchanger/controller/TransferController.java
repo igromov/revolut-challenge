@@ -4,9 +4,9 @@ import io.javalin.Context;
 import io.javalin.ExceptionHandler;
 import io.javalin.HaltException;
 import io.javalin.Javalin;
-import me.igromov.exchanger.controller.pojo.AccountCreateRequest;
-import me.igromov.exchanger.controller.pojo.ChangeBalanceRequest;
-import me.igromov.exchanger.controller.pojo.TransferRequest;
+import me.igromov.exchanger.controller.entity.AccountCreateRequest;
+import me.igromov.exchanger.controller.entity.ChangeBalanceRequest;
+import me.igromov.exchanger.controller.entity.TransferRequest;
 import me.igromov.exchanger.exception.AccountNotFoundException;
 import me.igromov.exchanger.exception.ApiRuntimeException;
 import me.igromov.exchanger.service.TransferService;
@@ -21,7 +21,6 @@ public class TransferController {
 
     public TransferController(Javalin router, TransferService transferService) {
         this.transferService = transferService;
-
         router.get("/account/balance/:id", this::getBalance);
         router.post("/account/create", this::createAccount);
         router.post("/account/withdraw", this::withdrawn);

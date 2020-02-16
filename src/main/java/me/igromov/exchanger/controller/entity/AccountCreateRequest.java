@@ -1,4 +1,4 @@
-package me.igromov.exchanger.controller.pojo;
+package me.igromov.exchanger.controller.entity;
 
 public class AccountCreateRequest {
     private Long id;

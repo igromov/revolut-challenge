@@ -26,8 +26,8 @@ public class TransferServiceHighLoadTest {
         transferService = null;
     }
 
-    @Test
-    public void transferTest8() {
+    @Test(timeout = 5000)
+    public void simpleTransferToNextAccountTest() {
         IntStream.rangeClosed(1, 1000)
                 .parallel()
                 .forEach(id -> transferService.createAccount(id, 1000));
@@ -56,7 +56,7 @@ public class TransferServiceHighLoadTest {
     }
 
     @Test(timeout = 5000)
-    public void transferTest9() throws InterruptedException {
+    public void chaoticTransferTest() throws InterruptedException {
         int startAccIdIncl = 1;
         int endAccIdIncl = 1000;
 
@@ -108,7 +108,7 @@ public class TransferServiceHighLoadTest {
 
 
     @Test(timeout = 5000)
-    public void transferTest10() throws InterruptedException {
+    public void twoAccountsHighloadTransferTest() throws InterruptedException {
         transferService.createAccount(1, 100);
         transferService.createAccount(2, 100);
 
@@ -137,7 +137,7 @@ public class TransferServiceHighLoadTest {
     }
 
     @Test(timeout = 5000)
-    public void withdrawDepositTest5() throws InterruptedException {
+    public void withdrawAndDepositTest() throws InterruptedException {
         transferService.createAccount(1, 1000);
 
         ExecutorService executor = Executors.newFixedThreadPool(20);

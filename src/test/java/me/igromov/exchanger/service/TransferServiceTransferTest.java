@@ -26,26 +26,26 @@ public class TransferServiceTransferTest {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void transferTest() {
+    public void transferFromToNonExistentAccountsTest() {
         transferService.transfer(1, 2, 0);
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void transferTest1() {
+    public void transferToNonExistentAccountsTest() {
         transferService.createAccount(1, 100);
 
         transferService.transfer(1, 2, 0);
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void transferTest2() {
+    public void transferFromNonExistentAccountsTest() {
         transferService.createAccount(2, 100);
 
         transferService.transfer(1, 2, 0);
     }
 
     @Test
-    public void transferTest3() {
+    public void simpleTransferTest() {
         transferService.createAccount(1, 100);
         transferService.createAccount(2, 0);
 
@@ -56,7 +56,7 @@ public class TransferServiceTransferTest {
     }
 
     @Test
-    public void transferTest4() {
+    public void compoundTransferTest() {
         transferService.createAccount(1, 100);
         transferService.createAccount(2, 0);
 
@@ -68,7 +68,7 @@ public class TransferServiceTransferTest {
     }
 
     @Test(expected = IllegalBalanceOperationException.class)
-    public void transferTest5() {
+    public void transferTooMuchMoneyTest() {
         transferService.createAccount(1, 100);
         transferService.createAccount(2, 0);
 
@@ -77,7 +77,7 @@ public class TransferServiceTransferTest {
     }
 
     @Test
-    public void transferTest6() {
+    public void withdrawTooMuchMoneyTest2() {
         transferService.createAccount(1, 100);
         transferService.createAccount(2, 0);
 
@@ -93,7 +93,7 @@ public class TransferServiceTransferTest {
     }
 
     @Test
-    public void transferTest7() {
+    public void simpleMultipleAccountTransferTest() {
         transferService.createAccount(1, 100);
         transferService.createAccount(2, 100);
         transferService.createAccount(3, 0);
@@ -111,7 +111,7 @@ public class TransferServiceTransferTest {
     }
 
     @Test
-    public void withdrawDepositTest1() {
+    public void validDepositTest() {
         transferService.createAccount(1, 100);
 
         transferService.deposit(1, 100);
@@ -122,7 +122,7 @@ public class TransferServiceTransferTest {
     }
 
     @Test
-    public void withdrawDepositTest2() {
+    public void validWithdrawTest() {
         transferService.createAccount(1, 100);
 
         transferService.withdraw(1, 100);
@@ -131,22 +131,27 @@ public class TransferServiceTransferTest {
     }
 
     @Test(expected = IllegalBalanceOperationException.class)
-    public void withdrawDepositTest3() {
+    public void withdrawTooMuchMoneyTest() {
         transferService.createAccount(1, 100);
 
         transferService.withdraw(1, 50);
         transferService.withdraw(1, 51);
-
-        Assert.assertEquals(0, transferService.getBalance(1));
     }
 
     @Test
-    public void withdrawDepositTest4() {
+    public void withdrawDepositTest() {
         transferService.createAccount(1, 100);
 
         transferService.withdraw(1, 50);
         transferService.deposit(1, 100);
 
         Assert.assertEquals(150, transferService.getBalance(1));
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void accountOverflowTest() {
+        transferService.createAccount(1, Long.MAX_VALUE - 20);
+
+        transferService.deposit(1, 100);
     }
 }

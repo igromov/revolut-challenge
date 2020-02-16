@@ -57,4 +57,16 @@ public class TransferIT extends BaseIT {
         Assert.assertEquals(HTTP_OK, responses.get(5).getStatus());
         Assert.assertEquals("0", responses.get(5).getBody());
     }
+
+    @Test
+    public void transferValidTest() {
+        createAccount(3, 200);
+        createAccount(4, 0);
+
+        HttpResponse<String> response = transfer(3, 4, 100);
+
+        Assert.assertEquals(HTTP_OK, response.getStatus());
+        Assert.assertEquals("100", getBalance(3).getBody());
+        Assert.assertEquals("100", getBalance(4).getBody());
+    }
 }

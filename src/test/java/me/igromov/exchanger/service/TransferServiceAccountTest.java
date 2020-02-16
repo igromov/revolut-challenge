@@ -27,51 +27,51 @@ public class TransferServiceAccountTest {
     }
 
     @Test(expected = AccountAlreadyExistsException.class)
-    public void accountTest() {
+    public void createDuplicateAccountTest() {
         transferService.createAccount(1, 100);
         transferService.createAccount(1, 100);
     }
 
     @Test
-    public void accountTest2() {
+    public void createValidAccountsTest() {
         transferService.createAccount(1, 100);
         transferService.createAccount(2, 100);
     }
 
     @Test(expected = InvalidAccountParametersException.class)
-    public void accountTest3() {
+    public void createAccountWithNegativeBalanceTest() {
         transferService.createAccount(1, -100);
     }
 
     @Test
-    public void accountTest4() {
+    public void createAccountWithZeroBalanceTest() {
         transferService.createAccount(1, 0);
     }
 
     @Test(expected = InvalidAccountParametersException.class)
-    public void accountTest5() {
+    public void createAccountWithNegativeIdTest() {
         transferService.createAccount(-1, 100);
     }
 
     @Test
-    public void accountTest6() {
+    public void createMultipleAccountsTest() {
         IntStream.rangeClosed(1, 1000)
                 .parallel()
                 .forEach(id -> transferService.createAccount(id, 100));
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void accountTest7() {
+    public void getBalanceFromInvalidAccountTest() {
         transferService.getBalance(-1);
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void accountTest8() {
+    public void getBalanceFromNonExistentAccountTest() {
         transferService.getBalance(100);
     }
 
     @Test
-    public void accountTest9() {
+    public void getBalanceTest() {
         transferService.createAccount(1, 100);
         long actual = transferService.getBalance(1);
 
