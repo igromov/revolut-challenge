@@ -18,7 +18,7 @@ public class InMemoryAccountDao implements AccountDao {
         }
 
         if (id <= 0) {
-            throw new InvalidAccountParametersException("Account id should be > 0, but was " + initialBalance);
+            throw new InvalidAccountParametersException("Account id should be > 0, but was " + id);
         }
 
         Account account = new Account(id, initialBalance);

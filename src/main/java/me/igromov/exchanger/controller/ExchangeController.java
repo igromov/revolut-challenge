@@ -25,6 +25,7 @@ public class ExchangeController {
 
     public ExchangeController(Javalin router, ExchangeService exchangeService) {
         this.exchangeService = exchangeService;
+        
         router.get("/account/balance/:id", this::getBalance);
         router.post("/account/create", this::createAccount);
         router.post("/account/withdraw", this::withdrawn);

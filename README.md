@@ -26,3 +26,12 @@ Base URL: http://localhost:7000/exchanger/
 | POST   | /account/withdraw    | {"id":2,"amount":500}          | Decrease balance of specified account                   | Status: 200      |
 | POST   | /account/deposit     | {"id":2,"amount":500}          | Increase balance of specified account                   | Status: 200      |
 | POST   | /transfer            | {"from":1,"to":2,"amount":500} | Transfer money from one account to another              | Status: 200      |
+
+In case of any incorrect API usage (e.g. one tries to create an account with some ID that already exists)
+client will get 400 status code with error details in body.
+
+**Example:**
+```
+method: POST
+url:    http://localhost:7000/exchanger/transfer
+body:   Account id should be > 0, but was -2```
