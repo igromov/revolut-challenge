@@ -38,5 +38,5 @@ url:    http://localhost:7000/exchanger/account/create
 body:   {"id":-2,"balance":1000}   
 
 Response
-status: 40
+status: 400
 body:   Account id should be > 0, but was -2```
