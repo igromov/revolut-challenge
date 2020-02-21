@@ -1,6 +1,7 @@
 package me.igromov.exchanger.it;
 
-import kong.unirest.HttpResponse;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ import static java.net.HttpURLConnection.*;
 public class TransferIT extends BaseIT {
 
     @Test
-    public void transferNonExistentAccountsTest() {
+    public void transferNonExistentAccountsTest() throws UnirestException {
         HttpResponse<String> response = transfer(1, 2, 100);
         Assert.assertEquals(response.getBody(), HTTP_BAD_REQUEST, response.getStatus());
 
@@ -26,7 +27,7 @@ public class TransferIT extends BaseIT {
     }
 
     @Test
-    public void transferInvalidAmounts() {
+    public void transferInvalidAmounts() throws UnirestException {
         createAccount(3, 200);
         createAccount(4, 0);
 
@@ -59,14 +60,14 @@ public class TransferIT extends BaseIT {
     }
 
     @Test
-    public void transferValidTest() {
-        createAccount(3, 200);
-        createAccount(4, 0);
+    public void transferValidTest() throws UnirestException {
+        createAccount(5, 200);
+        createAccount(6, 0);
 
-        HttpResponse<String> response = transfer(3, 4, 100);
+        HttpResponse<String> response = transfer(5, 6, 100);
 
         Assert.assertEquals(HTTP_OK, response.getStatus());
-        Assert.assertEquals("100", getBalance(3).getBody());
-        Assert.assertEquals("100", getBalance(4).getBody());
+        Assert.assertEquals("100", getBalance(5).getBody());
+        Assert.assertEquals("100", getBalance(6).getBody());
     }
 }

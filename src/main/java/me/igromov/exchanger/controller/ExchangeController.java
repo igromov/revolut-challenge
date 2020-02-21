@@ -102,7 +102,7 @@ public class ExchangeController {
         return (exception, ctx) -> {
             ctx.status(statusCode);
             ctx.result(exception.getMessage());
-            log.error("Exception while handling request:\nurl: {}\nmethod: {}\nbody: {}", ctx.url(), ctx.method(), ctx.body(), exception);
+            log.warn("Exception while handling request:\nurl: {}\nmethod: {}\nbody: {}", ctx.url(), ctx.method(), ctx.body(), exception);
         };
     }
 }

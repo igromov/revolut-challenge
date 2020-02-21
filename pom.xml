@@ -22,6 +22,19 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <includes>
+                        <include>**/*IT</include>
+                    </includes>
+                    <excludes>
+                        <exclude>BaseIT</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.2.0</version>
 
@@ -77,11 +90,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.mashape.unirest/unirest-java -->
         <dependency>
-            <groupId>com.konghq</groupId>
+            <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>${unirest-java.version}</version>
+            <version>1.4.9</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 </project>

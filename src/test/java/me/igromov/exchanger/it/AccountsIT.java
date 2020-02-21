@@ -1,15 +1,15 @@
 package me.igromov.exchanger.it;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.UnirestException;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 public class AccountsIT extends BaseIT {
 
@@ -23,13 +23,13 @@ public class AccountsIT extends BaseIT {
     }
 
     @Test
-    public void createDifferentAccountsTest() {
-        Map<Long, HttpResponse<String>> responses = LongStream.rangeClosed(101, 200)
-                .boxed()
-                .collect(Collectors.toMap(
-                        id -> id,
-                        id -> createAccount(id, 999))
-                );
+    public void createDifferentAccountsTest() throws UnirestException {
+        Map<Long, HttpResponse<String>> responses = new HashMap<>();
+
+        for (long id = 101; id <= 200; id++) {
+            HttpResponse<String> response = createAccount(id, 999);
+            responses.put(id, response);
+        }
 
         responses.forEach((id, response) -> {
             Assert.assertEquals(
